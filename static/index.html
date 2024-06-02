@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Manager</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .file-item { margin-bottom: 10px; }
+        button { margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <h1>File Manager</h1>
+    <input type="file" id="fileUpload">
+    <button onclick="uploadFile()">Upload File</button>
+    <h2>Files:</h2>
+    <div id="fileList"></div>
+
+    <script>
+        function fetchFiles() {
+            $.get('/files/', function(data) {
+                $('#fileList').empty();
+                data.forEach(file => {
+                    $('#fileList').append(
+                        `<div class="file-item">${file.filename}
+                            <button onclick="deleteFile(${file.id})">Delete</button>
+                            <button onclick="window.location='/files/${file.id}/download'">Download</button>
+                        </div>`
+                    );
+                });
+            });
+        }
+
+        function uploadFile() {
+            var file_data = $('#fileUpload').prop('files')[0];
+            var form_data = new FormData();
+            form_data.append('file', file_data);
+
+            $.ajax({
+                url: '/files/',
+                type: 'post',
+                processData: false,
+                contentType: false,
+                data: form_data,
+                success: function(response) {
+                    console.log('Upload successful!');
+                    fetchFiles();
+                },
+                error: function(response) {
+                    console.error('Upload failed!');
+                }
+            });
+        }
+
+        function deleteFile(fileId) {
+            $.ajax({
+                url: '/files/' + fileId,
+                type: 'delete',
+                success: function(result) {
+                    fetchFiles();
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            fetchFiles();
+        });
+    </script>
+</body>
+</html>
