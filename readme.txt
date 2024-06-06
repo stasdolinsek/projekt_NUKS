@@ -1,7 +1,7 @@
 V projketu sem naredil txt. bazo podatkov. 
 Datoteke je možno naložiti v bazo podatkov, jih naložiti iz baze podatkov in odstraniti. 
 
-**Setup**
+##Setup
 
 Kloniranje repozitorija:
 ```bash
